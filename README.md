@@ -39,7 +39,7 @@ ng version
 
 ### 1. Clonar el repositorio
 
-git clone https://github.com/tu-usuario/risk-system-frontend.git
+git clone https://github.com/martinskerr/SISTEMADEGESTIONDERIESGOS.git
 cd risk-system-frontend
 ### 2. Instalar dependencias
 ### 3. Configurar variables de entorno (opcional)
