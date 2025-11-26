@@ -1,0 +1,95 @@
+<div style="
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+">
+  <div style="
+    width: 370px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(102,126,234,0.07), 0 0 0 2px #ede7f6;
+    padding: 36px 36px 25px 36px;
+  ">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <div style="font-size: 48px; color: #764ba2; margin-bottom: 8px;">🔒</div>
+      <h2 style="margin: 0; font-weight: 800; color: #2c3e50; letter-spacing: 1px;">Iniciar sesión</h2>
+      <p style="color: #764ba2; font-size: 14px; margin-top: 6px;">Accede al sistema de gestión de riesgos</p>
+    </div>
+    <form (ngSubmit)="onSubmit()" style="margin-top: 10px;">
+      <!-- Email -->
+      <div style="margin-bottom: 18px;">
+        <label for="email" style="font-size: 15px; color: #495057; font-weight: bold;">Correo electrónico</label>
+        <input 
+          id="email"
+          name="email"
+          [(ngModel)]="email"
+          type="email"
+          required
+          autocomplete="username"
+          style="
+            width: 100%;
+            margin-top: 8px;
+            padding: 14px;
+            border-radius: 8px;
+            border: 2px solid #eee;
+            background: #f8f9fa;
+            font-size: 15px;
+            transition: border 0.3s;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.05);
+          "
+          onfocus="this.style.borderColor='#764ba2'"
+          onblur="this.style.borderColor='#eee'"
+        />
+      </div>
+      <!-- Password -->
+      <div style="margin-bottom: 22px;">
+        <label for="password" style="font-size: 15px; color: #495057; font-weight: bold;">Contraseña</label>
+        <input 
+          id="password" 
+          name="password" 
+          [(ngModel)]="password"
+          type="password"
+          required
+          autocomplete="current-password"
+          style="
+            width: 100%;
+            margin-top: 8px;
+            padding: 14px;
+            border-radius: 8px;
+            border: 2px solid #eee;
+            background: #f8f9fa;
+            font-size: 15px;
+            transition: border 0.3s;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.05);
+          "
+          onfocus="this.style.borderColor='#764ba2'"
+          onblur="this.style.borderColor='#eee'"
+        />
+      </div>
+      <button type="submit" style="
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 16px rgba(102,126,234,0.18);
+        transition: background 0.2s;
+      ">
+        Entrar
+      </button>
+    </form>
+    <div *ngIf="error" style="color: #dc3545; background: #ffe6e6; margin-top: 20px; padding: 12px; border-radius: 7px; font-size: 15px; text-align: center;">
+      {{ error }}
+    </div>
+    <div style="margin-top: 25px; text-align: center; color: #888; font-size: 13px;">
+      © 2025 RiskSystem
+    </div>
+  </div>
+</div>

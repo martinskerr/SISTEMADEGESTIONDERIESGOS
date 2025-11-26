@@ -1,0 +1,156 @@
+<div style="display: flex; min-height: 100vh; background: #f8f9fa;">
+
+  <!-- Sidebar -->
+  <aside style="
+    width: 260px;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0;
+    box-shadow: 4px 0 16px rgba(102, 126, 234, 0.15);
+    display: flex;
+    flex-direction: column;
+  ">
+    
+    <!-- Logo/Header -->
+    <div style="
+      padding: 30px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+    ">
+      <div style="font-size: 42px; margin-bottom: 8px;">🛡️</div>
+      <h2 style="margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 1px;">RiskSystem</h2>
+      <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">Gestión de Riesgos</p>
+    </div>
+
+    <!-- Menú -->
+    <nav style="flex: 1; padding: 20px 0;">
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        
+        <li style="margin-bottom: 5px;">
+          <a routerLink="/dashboard" routerLinkActive="active-link" style="
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+          " 
+          onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.borderLeftColor='white'"
+          onmouseout="this.style.background='transparent'; this.style.borderLeftColor='transparent'">
+            <span style="font-size: 20px; margin-right: 12px;">📊</span>
+            Dashboard
+          </a>
+        </li>
+
+        <li style="margin-bottom: 5px;">
+          <a routerLink="/riesgos" routerLinkActive="active-link" style="
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+          "
+          onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.borderLeftColor='white'"
+          onmouseout="this.style.background='transparent'; this.style.borderLeftColor='transparent'">
+            <span style="font-size: 20px; margin-right: 12px;">⚠️</span>
+            Riesgos
+          </a>
+        </li>
+
+        <li style="margin-bottom: 5px;">
+          <a routerLink="/incidentes" routerLinkActive="active-link" style="
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+          "
+          onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.borderLeftColor='white'"
+          onmouseout="this.style.background='transparent'; this.style.borderLeftColor='transparent'">
+            <span style="font-size: 20px; margin-right: 12px;">🚨</span>
+            Incidentes
+          </a>
+        </li>
+
+        <li style="margin-bottom: 5px;">
+          <a routerLink="/reportes" routerLinkActive="active-link" style="
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+          "
+          onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.borderLeftColor='white'"
+          onmouseout="this.style.background='transparent'; this.style.borderLeftColor='transparent'">
+            <span style="font-size: 20px; margin-right: 12px;">📈</span>
+            Reportes
+          </a>
+        </li>
+
+        <li style="margin-bottom: 5px;">
+          <a routerLink="/usuarios" routerLinkActive="active-link" style="
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+          "
+          onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.borderLeftColor='white'"
+          onmouseout="this.style.background='transparent'; this.style.borderLeftColor='transparent'">
+            <span style="font-size: 20px; margin-right: 12px;">👥</span>
+            Usuarios
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <!-- Botón cerrar sesión -->
+    <div style="padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+      <a (click)="logout()" style="
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        transition: all 0.3s;
+      "
+      onmouseover="this.style.background='rgba(255, 255, 255, 0.2)'"
+      onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'">
+        <span style="font-size: 20px; margin-right: 12px;">🚪</span>
+        Cerrar sesión
+      </a>
+    </div>
+
+  </aside>
+
+  <!-- Contenido principal -->
+  <main style="flex: 1; overflow-y: auto;">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

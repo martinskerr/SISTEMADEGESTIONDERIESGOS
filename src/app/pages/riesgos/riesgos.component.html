@@ -1,0 +1,88 @@
+<div style="padding: 20px; max-width: 1400px; margin: 0 auto;">
+  
+  <!-- Header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    <h2 style="margin: 0; color: #2c3e50; font-size: 28px;">Listado de Riesgos</h2>
+    <button 
+      routerLink="/riesgos/nuevo" 
+      style="padding: 12px 24px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);">
+      <span style="font-size: 18px; margin-right: 5px;">+</span> Nuevo Riesgo
+    </button>
+  </div>
+
+  <!-- Mensajes -->
+  <p *ngIf="cargando" style="padding: 15px; border-radius: 6px; text-align: center; background: #e3f2fd; color: #1976d2;">
+    ⏳ Cargando riesgos...
+  </p>
+  <p *ngIf="error" style="padding: 15px; border-radius: 6px; text-align: center; background: #ffebee; color: #c62828;">
+    ❌ {{ error }}
+  </p>
+
+  <!-- Tabla -->
+  <div *ngIf="!cargando && riesgos.length > 0" style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+      <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <tr>
+          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">ID</th>
+          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Título</th>
+          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Descripción</th>
+          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Categoría</th>
+          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Área/Proceso</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap;">Prob</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap;">Impacto</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap;">Nivel</th>
+          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Estado</th>
+          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Fecha Alta</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap;">Resp</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of riesgos" style="border-bottom: 1px solid #e9ecef;">
+          <td style="padding: 12px; font-weight: bold; color: #6c757d; font-size: 13px;">{{ r.riesgo_id }}</td>
+          <td style="padding: 12px; font-weight: 600; color: #2c3e50; max-width: 200px;">{{ r.titulo }}</td>
+          <td style="padding: 12px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #6c757d; font-size: 13px;">{{ r.descripcion }}</td>
+          <td style="padding: 12px;">{{ r.categoria }}</td>
+          <td style="padding: 12px;">{{ r.area_proceso }}</td>
+          <td style="padding: 12px; text-align: center;">{{ r.probabilidad }}</td>
+          <td style="padding: 12px; text-align: center;">{{ r.impacto }}</td>
+          <td style="padding: 12px; text-align: center;">
+            <span [style]="'padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; display: inline-block; min-width: 35px; background: ' + getNivelBgColor(r.nivel_riesgo) + '; color: ' + getNivelTextColor(r.nivel_riesgo)">
+              {{ r.nivel_riesgo }}
+            </span>
+          </td>
+          <td style="padding: 12px;">
+            <span [style]="'padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; display: inline-block; background: ' + getEstadoBgColor(r.estado) + '; color: ' + getEstadoTextColor(r.estado)">
+              {{ r.estado }}
+            </span>
+          </td>
+          <td style="padding: 12px;">{{ r.fecha_alta | date:'dd/MM/yyyy' }}</td>
+          <td style="padding: 12px; text-align: center;">{{ r.responsable_id }}</td>
+          <td style="padding: 12px; text-align: center; white-space: nowrap;">
+            <button 
+              [routerLink]="['/riesgos/editar', r.riesgo_id]" 
+              style="padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; background: #e3f2fd; margin: 0 3px;"
+              title="Editar">
+              ✏️
+            </button>
+            <button 
+              (click)="eliminarRiesgo(r.riesgo_id, r.titulo)" 
+              style="padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; background: #ffebee; margin: 0 3px;"
+              title="Eliminar">
+              🗑️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mensaje vacío -->
+  <div *ngIf="!cargando && riesgos.length === 0 && !error" style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 8px;">
+    <p style="font-size: 18px; color: #6c757d; margin-bottom: 20px;">📋 No hay riesgos registrados.</p>
+    <button routerLink="/riesgos/nuevo" style="padding: 12px 24px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer;">
+      Crear primer riesgo
+    </button>
+  </div>
+
+</div>

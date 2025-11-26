@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+.active-link {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-left-color: white !important;
+}
+
+* {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+}

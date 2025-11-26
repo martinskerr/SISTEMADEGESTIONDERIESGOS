@@ -1,0 +1,177 @@
+<div style="padding: 20px; max-width: 900px; margin: 0 auto;">
+  
+  <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+    
+    <!-- Header -->
+    <div style="margin-bottom: 30px; border-bottom: 3px solid; border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1; padding-bottom: 15px;">
+      <h2 style="margin: 0; color: #2c3e50; font-size: 28px;">
+        {{ isEditMode ? '✏️ Editar Riesgo' : '➕ Nuevo Riesgo' }}
+      </h2>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #riesgoForm="ngForm">
+      
+      <!-- Título -->
+      <div style="margin-bottom: 20px;">
+        <label for="titulo" style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Título *</label>
+        <input 
+          id="titulo" 
+          name="titulo" 
+          [(ngModel)]="riesgo.titulo" 
+          type="text" 
+          required 
+          maxlength="150"
+          placeholder="Ej: Falla en servidor principal"
+          style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px; transition: border 0.3s;"
+          onfocus="this.style.borderColor='#667eea'"
+          onblur="this.style.borderColor='#dee2e6'"
+        />
+      </div>
+
+      <!-- Descripción -->
+      <div style="margin-bottom: 20px;">
+        <label for="descripcion" style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Descripción *</label>
+        <textarea 
+          id="descripcion" 
+          name="descripcion" 
+          [(ngModel)]="riesgo.descripcion" 
+          required
+          rows="4"
+          placeholder="Describe el riesgo identificado..."
+          style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px; font-family: inherit; resize: vertical; transition: border 0.3s;"
+          onfocus="this.style.borderColor='#667eea'"
+          onblur="this.style.borderColor='#dee2e6'"
+        ></textarea>
+      </div>
+
+      <!-- Categoría y Área (en fila) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div>
+          <label for="categoria" style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Categoría *</label>
+          <select 
+            id="categoria" 
+            name="categoria" 
+            [(ngModel)]="riesgo.categoria" 
+            required
+            style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px; background: white;">
+            <option value="">Seleccionar...</option>
+            <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="area_proceso" style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Área/Proceso *</label>
+          <select 
+            id="area_proceso" 
+            name="area_proceso" 
+            [(ngModel)]="riesgo.area_proceso" 
+            required
+            style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px; background: white;">
+            <option value="">Seleccionar...</option>
+            <option *ngFor="let area of areas" [value]="area">{{ area }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Probabilidad e Impacto (en fila) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div>
+          <label for="probabilidad" style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Probabilidad (1-5) *</label>
+          <input 
+            id="probabilidad" 
+            name="probabilidad" 
+            [(ngModel)]="riesgo.probabilidad" 
+            type="number" 
+            min="1" 
+            max="5" 
+            required
+            style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;"
+          />
+          <small style="color: #6c757d; font-size: 12px;">1=Muy bajo, 5=Muy alto</small>
+        </div>
+
+        <div>
+          <label for="impacto" style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Impacto (1-5) *</label>
+          <input 
+            id="impacto" 
+            name="impacto" 
+            [(ngModel)]="riesgo.impacto" 
+            type="number" 
+            min="1" 
+            max="5" 
+            required
+            style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;"
+          />
+          <small style="color: #6c757d; font-size: 12px;">1=Muy bajo, 5=Muy alto</small>
+        </div>
+      </div>
+
+      <!-- Nivel de Riesgo Calculado -->
+      <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 20px; margin: 25px 0; border-radius: 8px; text-align: center; border-left: 4px solid; border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;">
+        <strong style="font-size: 16px; color: #495057;">Nivel de Riesgo Calculado:</strong> 
+        <span [style]="'display: inline-block; margin: 10px 0; padding: 10px 20px; border-radius: 25px; font-size: 28px; font-weight: bold; background: ' + getNivelBgColor(calcularNivelRiesgo()) + '; color: ' + getNivelTextColor(calcularNivelRiesgo())">
+          {{ calcularNivelRiesgo() }}
+        </span>
+        <br>
+        <small style="color: #6c757d;">(Probabilidad × Impacto)</small>
+      </div>
+
+      <!-- Estado y Responsable (en fila) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+        <div>
+          <label for="estado" style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Estado *</label>
+          <select 
+            id="estado" 
+            name="estado" 
+            [(ngModel)]="riesgo.estado" 
+            required
+            style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px; background: white;">
+            <option *ngFor="let est of estados" [value]="est">{{ est }}</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="responsable_id" style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Responsable *</label>
+          <select 
+            id="responsable_id" 
+            name="responsable_id" 
+            [(ngModel)]="riesgo.responsable_id" 
+            required
+            [disabled]="!responsables || responsables.length === 0"
+            style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px; background: white;">
+            <option value="" *ngIf="!responsables || responsables.length === 0">Cargando usuarios...</option>
+            <option *ngFor="let resp of responsables" [value]="resp.id">{{ resp.nombre }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Mensajes -->
+      <div *ngIf="mensaje" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-weight: 500;">
+        ✅ {{ mensaje }}
+      </div>
+
+      <div *ngIf="error" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-weight: 500;">
+        ❌ {{ error }}
+      </div>
+
+      <!-- Botones -->
+      <div style="display: flex; gap: 10px; margin-top: 30px;">
+        <button 
+          type="submit" 
+          [disabled]="!riesgoForm.valid || guardando"
+          [style.opacity]="!riesgoForm.valid || guardando ? '0.5' : '1'"
+          [style.cursor]="!riesgoForm.valid || guardando ? 'not-allowed' : 'pointer'"
+          style="flex: 1; padding: 14px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);">
+          {{ guardando ? '⏳ Guardando...' : (isEditMode ? '💾 Actualizar' : '✅ Crear Riesgo') }}
+        </button>
+        <button 
+          type="button" 
+          (click)="cancelar()"
+          style="padding: 14px 24px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600;">
+          ❌ Cancelar
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
