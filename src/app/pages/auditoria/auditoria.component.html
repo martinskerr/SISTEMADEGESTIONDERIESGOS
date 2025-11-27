@@ -1,0 +1,197 @@
+<div style="padding: 20px; max-width: 1600px; margin: 0 auto;">
+  
+  <!-- Header -->
+  <div style="margin-bottom: 25px;">
+    <h2 style="margin: 0; color: #2c3e50; font-size: 28px; font-weight: 800;">📜 Auditoría del Sistema</h2>
+    <p style="color: #6c757d; margin-top: 8px; font-size: 15px;">Registro completo de todas las acciones realizadas</p>
+  </div>
+
+  <!-- Mensajes -->
+  <p *ngIf="cargando" style="padding: 15px; border-radius: 6px; text-align: center; background: #e3f2fd; color: #1976d2;">
+    ⏳ Cargando registros de auditoría...
+  </p>
+  <p *ngIf="error" style="padding: 15px; border-radius: 6px; text-align: center; background: #ffebee; color: #c62828;">
+    ❌ {{ error }}
+  </p>
+
+  <!-- Barra de Filtros -->
+  <div *ngIf="!cargando" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+    
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+      
+
+
+      <!-- Botón limpiar -->
+      <button 
+        (click)="limpiarFiltros()"
+        style="padding: 12px 20px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">
+        🔄 Limpiar
+      </button>
+
+      <!-- Botón recargar -->
+      <button 
+        (click)="cargarAuditoria()"
+        style="padding: 12px 20px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">
+        ↻ Recargar
+      </button>
+    </div>
+
+    <!-- Filtros -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+      
+      <!-- Filtro Entidad -->
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Entidad</label>
+        <select 
+          [(ngModel)]="filtroEntidad"
+          (ngModelChange)="aplicarFiltros()"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+          <option value="">Todas</option>
+          <option *ngFor="let ent of entidades" [value]="ent">{{ ent }}</option>
+        </select>
+      </div>
+
+      <!-- Filtro Acción -->
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Acción</label>
+        <select 
+          [(ngModel)]="filtroAccion"
+          (ngModelChange)="aplicarFiltros()"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+          <option value="">Todas</option>
+          <option *ngFor="let acc of acciones" [value]="acc">{{ acc }}</option>
+        </select>
+      </div>
+
+      <!-- Filtro Usuario -->
+
+    </div>
+
+    <!-- Contador -->
+    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6; font-size: 14px; color: #6c757d;">
+      <strong>{{ registrosFiltrados.length }}</strong> de <strong>{{ registros.length }}</strong> registros mostrados
+    </div>
+
+  </div>
+
+  <!-- Timeline de Auditoría -->
+  <div *ngIf="!cargando && registrosFiltrados.length > 0" style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 20px;">
+    
+    <div *ngFor="let registro of registrosFiltrados; let i = index" 
+         style="position: relative; padding-left: 50px; padding-bottom: 25px; border-left: 3px solid #e9ecef; margin-left: 20px;">
+      
+      <!-- Icono timeline -->
+      <div [style]="'position: absolute; left: -15px; top: 0; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; background: ' + getAccionColor(registro.accion)">
+        {{ getEntidadIcon(registro.entidad) }}
+      </div>
+
+      <!-- Contenido -->
+      <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid" [style.border-left-color]="getAccionColor(registro.accion)">
+        
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+          <div>
+            <span [style]="'padding: 3px 10px; border-radius: 15px; font-size: 11px; font-weight: 700; color: white; background: ' + getAccionColor(registro.accion) + '; margin-right: 8px;'">
+              {{ registro.accion }}
+            </span>
+            <span style="font-weight: 600; color: #2c3e50; font-size: 14px;">{{ registro.entidad }}</span>
+            <span style="color: #6c757d; font-size: 13px;"> #{{ registro.entidad_id }}</span>
+          </div>
+          <span style="font-size: 12px; color: #6c757d;">{{ formatearFecha(registro.fecha_hora) }}</span>
+        </div>
+
+        <p style="margin: 0 0 10px 0; color: #495057; font-size: 14px;">
+          <strong>{{ registro.usuario_nombre }}</strong>: {{ registro.descripcion }}
+        </p>
+
+        <button 
+          (click)="verDetalle(registro)"
+          style="padding: 6px 12px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+          Ver detalles
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Mensaje vacío -->
+  <div *ngIf="!cargando && registrosFiltrados.length === 0" style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 8px;">
+    <p style="font-size: 18px; color: #6c757d;">📜 No hay registros de auditoría</p>
+  </div>
+
+</div>
+
+<!-- Modal de Detalle -->
+<div *ngIf="mostrarDetalle" (click)="cerrarDetalle()" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+  
+  <div (click)="$event.stopPropagation()" style="background: white; border-radius: 12px; padding: 30px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #e9ecef;">
+      <h3 style="margin: 0; color: #2c3e50;">📋 Detalle de Auditoría</h3>
+      <button (click)="cerrarDetalle()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">✖️</button>
+    </div>
+
+    <div *ngIf="registroSeleccionado" style="font-size: 14px;">
+      
+      <div style="margin-bottom: 15px;">
+        <strong style="color: #6c757d;">ID:</strong>
+        <span style="margin-left: 10px;">{{ registroSeleccionado.auditoria_id }}</span>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <strong style="color: #6c757d;">Usuario:</strong>
+        <span style="margin-left: 10px;">{{ registroSeleccionado.usuario_nombre }}</span>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <strong style="color: #6c757d;">Acción:</strong>
+        <span [style]="'margin-left: 10px; padding: 3px 10px; border-radius: 15px; font-size: 11px; font-weight: 700; color: white; background: ' + getAccionColor(registroSeleccionado.accion)">
+          {{ registroSeleccionado.accion }}
+        </span>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <strong style="color: #6c757d;">Entidad:</strong>
+        <span style="margin-left: 10px;">{{ registroSeleccionado.entidad }} #{{ registroSeleccionado.entidad_id }}</span>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <strong style="color: #6c757d;">Fecha y Hora:</strong>
+        <span style="margin-left: 10px;">{{ formatearFecha(registroSeleccionado.fecha_hora) }}</span>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <strong style="color: #6c757d;">Descripción:</strong>
+        <p style="margin: 5px 0 0 0; padding: 10px; background: #f8f9fa; border-radius: 4px;">{{ registroSeleccionado.descripcion }}</p>
+      </div>
+
+        <div *ngIf="registroSeleccionado.datos_anteriores" style="margin-bottom: 15px;">
+        <strong style="color: #6c757d;">Datos Anteriores:</strong>
+        <div style="margin: 10px 0 0 0; padding: 15px; background: #fff3cd; border-radius: 6px; border-left: 4px solid #ffc107;">
+            <div *ngFor="let key of objectKeys(registroSeleccionado.datos_anteriores)" style="margin-bottom: 8px;">
+            <strong style="color: #856404; font-size: 12px;">{{ key }}:</strong>
+            <span style="margin-left: 8px; color: #383d41; font-size: 13px;">{{ registroSeleccionado.datos_anteriores[key] }}</span>
+            </div>
+        </div>
+        </div>
+
+        <div *ngIf="registroSeleccionado.datos_nuevos" style="margin-bottom: 15px;">
+        <strong style="color: #6c757d;">Datos Nuevos:</strong>
+        <div style="margin: 10px 0 0 0; padding: 15px; background: #d4edda; border-radius: 6px; border-left: 4px solid #28a745;">
+            <div *ngFor="let key of objectKeys(registroSeleccionado.datos_nuevos)" style="margin-bottom: 8px;">
+            <strong style="color: #155724; font-size: 12px;">{{ key }}:</strong>
+            <span style="margin-left: 8px; color: #383d41; font-size: 13px;">{{ registroSeleccionado.datos_nuevos[key] }}</span>
+            </div>
+        </div>
+        </div>
+
+      <div *ngIf="registroSeleccionado.direccion_ip" style="margin-bottom: 15px;">
+        <strong style="color: #6c757d;">IP:</strong>
+        <span style="margin-left: 10px;">{{ registroSeleccionado.direccion_ip }}</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

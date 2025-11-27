@@ -1,0 +1,204 @@
+<div style="padding: 20px; max-width: 1400px; margin: 0 auto;">
+  
+  <!-- Header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    <div>
+      <h2 style="margin: 0; color: #2c3e50; font-size: 28px; font-weight: 800;">🛡️ Planes de Mitigación</h2>
+      <p style="color: #6c757d; margin-top: 8px; font-size: 15px;">Controles y acciones para gestionar riesgos</p>
+    </div>
+    <button 
+      (click)="toggleFormulario()" 
+      [style.background]="mostrarFormulario ? 'linear-gradient(135deg, #6c757d 0%, #495057 100%)' : 'linear-gradient(135deg, #28a745 0%, #20c997 100%)'"
+      style="padding: 12px 24px; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);">
+      <span style="font-size: 18px; margin-right: 5px;">{{ mostrarFormulario ? '✖️' : '+' }}</span>
+      {{ mostrarFormulario ? 'Cancelar' : 'Nuevo Control' }}
+    </button>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="mensaje" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-weight: 500;">
+    ✅ {{ mensaje }}
+  </div>
+
+  <div *ngIf="error" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-weight: 500;">
+    ❌ {{ error }}
+  </div>
+
+  <!-- Formulario -->
+  <div *ngIf="mostrarFormulario" style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 25px;">
+    <h3 style="margin-top: 0; color: #2c3e50; margin-bottom: 20px;">
+      {{ isEditMode ? '✏️ Editar Control' : '➕ Nuevo Control' }}
+    </h3>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Riesgo Asociado *</label>
+        <select 
+          [(ngModel)]="nuevoControl.riesgo_id"
+          [disabled]="isEditMode"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+          <option [value]="0" disabled>Seleccionar riesgo</option>
+          <option *ngFor="let riesgo of riesgos" [value]="riesgo.riesgo_id">
+            {{ riesgo.titulo }}
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Tipo de Control *</label>
+        <select 
+          [(ngModel)]="nuevoControl.tipo"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+          <option *ngFor="let tipo of tipos" [value]="tipo">{{ tipo }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Descripción del Control *</label>
+      <textarea 
+        [(ngModel)]="nuevoControl.descripcion"
+        rows="3"
+        placeholder="Ej: Implementar firewall perimetral y monitoreo 24/7..."
+        style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px; resize: vertical;"></textarea>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Responsable</label>
+        <select 
+          [(ngModel)]="nuevoControl.responsable_id"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+          <option [value]="null">Sin asignar</option>
+          <option *ngFor="let usuario of usuarios" [value]="usuario.id">
+            {{ usuario.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Estado</label>
+        <select 
+          [(ngModel)]="nuevoControl.estado"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+          <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Efectividad (%)</label>
+        <input 
+          [(ngModel)]="nuevoControl.efectividad"
+          type="number"
+          min="0"
+          max="100"
+          placeholder="0-100"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Fecha Inicio</label>
+        <input 
+          [(ngModel)]="nuevoControl.fecha_inicio"
+          type="date"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+      </div>
+
+      <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #495057;">Fecha Límite</label>
+        <input 
+          [(ngModel)]="nuevoControl.fecha_limite"
+          type="date"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button 
+        (click)="guardarControl()"
+        style="padding: 12px 24px; background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);">
+        💾 {{ isEditMode ? 'Actualizar' : 'Guardar' }}
+      </button>
+      <button 
+        (click)="cancelar()"
+        style="padding: 12px 24px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+        Cancelar
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <p *ngIf="cargando" style="padding: 15px; border-radius: 6px; text-align: center; background: #e3f2fd; color: #1976d2;">
+    ⏳ Cargando controles...
+  </p>
+
+  <!-- Tabla de controles -->
+  <div *ngIf="!cargando && controles.length > 0" style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+      <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <tr>
+          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px;">ID</th>
+          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px;">Riesgo</th>
+          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px;">Descripción</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px;">Tipo</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px;">Responsable</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px;">Estado</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px;">Efectividad</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px;">Fecha Límite</th>
+          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let control of controles" style="border-bottom: 1px solid #e9ecef;">
+          <td style="padding: 12px; font-weight: bold; color: #6c757d;">{{ control.control_id }}</td>
+          <td style="padding: 12px; color: #2c3e50; font-weight: 600;">{{ control.riesgo_titulo }}</td>
+          <td style="padding: 12px; color: #495057; max-width: 300px;">{{ control.descripcion }}</td>
+          <td style="padding: 12px; text-align: center;">
+            <span [style]="'padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 12px; display: inline-block; color: white; background: ' + getTipoBadgeColor(control.tipo)">
+              {{ control.tipo }}
+            </span>
+          </td>
+          <td style="padding: 12px; text-align: center; color: #495057;">{{ control.responsable_nombre }}</td>
+          <td style="padding: 12px; text-align: center;">
+            <span [style]="'padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 12px; display: inline-block; color: white; background: ' + getEstadoBadgeColor(control.estado)">
+              {{ control.estado }}
+            </span>
+          </td>
+          <td style="padding: 12px; text-align: center;">
+            <span [style]="'padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 12px; display: inline-block; color: white; background: ' + getEfectividadColor(control.efectividad)">
+              {{ control.efectividad }}%
+            </span>
+          </td>
+          <td style="padding: 12px; text-align: center; color: #495057;">{{ control.fecha_limite | date:'dd/MM/yyyy' }}</td>
+          <td style="padding: 12px; text-align: center; white-space: nowrap;">
+            <button 
+              (click)="editarControl(control)"
+              style="padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; background: #e3f2fd; margin: 0 3px;"
+              title="Editar">
+              ✏️
+            </button>
+            <button 
+              (click)="eliminarControl(control.control_id, control.descripcion)"
+              style="padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; background: #ffebee; margin: 0 3px;"
+              title="Eliminar">
+              🗑️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mensaje vacío -->
+  <div *ngIf="!cargando && controles.length === 0" style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 8px;">
+    <p style="font-size: 18px; color: #6c757d; margin-bottom: 20px;">🛡️ No hay controles registrados.</p>
+    <button 
+      (click)="toggleFormulario()" 
+      style="padding: 12px 24px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+      Crear primer control
+    </button>
+  </div>
+
+</div>

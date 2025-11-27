@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IncidentesService } from '../../core/incidentes.service';
 import { RiesgosService } from '../../core/riesgos.service';
+import { ExportService } from '../../core/export.service';
+
 
 @Component({
   selector: 'app-incidentes',
@@ -31,13 +33,15 @@ export class IncidentesComponent implements OnInit {
 
   constructor(
     private incidentesService: IncidentesService,
-    private riesgosService: RiesgosService
+    private riesgosService: RiesgosService,
+    private exportService: ExportService
   ) {}
 
   ngOnInit(): void {
     this.cargarIncidentes();
     this.cargarRiesgos();
   }
+
 
   cargarIncidentes() {
     this.cargando = true;
@@ -66,6 +70,26 @@ export class IncidentesComponent implements OnInit {
         console.error('Error al cargar riesgos', err);
       }
     });
+  }
+
+  // Agregar este método
+  exportarIncidentesExcel() {
+    if (this.incidentes.length === 0) {
+      alert('No hay incidentes para exportar');
+      return;
+    }
+
+    // Preparar datos con formato legible
+    const datosExportar = this.incidentes.map(i => ({
+      'ID': i.incidente_id,
+      'Riesgo Asociado': i.riesgo_titulo,
+      'Descripción': i.descripcion,
+      'Estado': i.estado,
+      'Fecha Incidente': i.fecha_incidente ? new Date(i.fecha_incidente).toLocaleDateString() : '',
+      'Hora': i.fecha_incidente ? new Date(i.fecha_incidente).toLocaleTimeString() : ''
+    }));
+
+    this.exportService.exportarExcel(datosExportar, 'Reporte_Incidentes', 'Incidentes');
   }
 
   toggleFormulario() {

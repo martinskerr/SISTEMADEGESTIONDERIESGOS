@@ -1,0 +1,74 @@
+<div style="padding: 20px; max-width: 1400px; margin: 0 auto;">
+  
+  <!-- Header -->
+  <div style="margin-bottom: 25px;">
+    <h2 style="margin: 0; color: #2c3e50; font-size: 28px; font-weight: 800;">
+      📊 Matriz de Riesgos
+    </h2>
+    <p style="color: #6c757d; margin-top: 8px; font-size: 15px;">
+      Análisis visual de riesgos según probabilidad e impacto
+    </p>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="cargando" style="text-align: center; padding: 80px 20px; background: #f8f9fa; border-radius: 12px;">
+    <div style="font-size: 48px; margin-bottom: 15px;">⏳</div>
+    <p style="font-size: 18px; color: #6c757d;">Cargando matriz...</p>
+  </div>
+
+  <div *ngIf="!cargando">
+    
+    <!-- Tarjetas de Cuadrantes -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+      
+      <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-left: 5px solid #28a745;">
+        <div style="font-size: 36px; font-weight: 800; color: #28a745; margin-bottom: 8px;">{{ bajoBajo }}</div>
+        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; color: #6c757d;">Bajo-Bajo (Verde)</div>
+        <div style="font-size: 12px; color: #999; margin-top: 5px;">Probabilidad ≤3, Impacto ≤3</div>
+      </div>
+
+      <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-left: 5px solid #ffc107;">
+        <div style="font-size: 36px; font-weight: 800; color: #f57c00; margin-bottom: 8px;">{{ bajoAlto + altoBajo }}</div>
+        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; color: #6c757d;">Moderados (Amarillo)</div>
+        <div style="font-size: 12px; color: #999; margin-top: 5px;">P≤3,I>3 o P>3,I≤3</div>
+      </div>
+
+      <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-left: 5px solid #dc3545;">
+        <div style="font-size: 36px; font-weight: 800; color: #dc3545; margin-bottom: 8px;">{{ altoAlto }}</div>
+        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; color: #6c757d;">Alto-Alto (Rojo)</div>
+        <div style="font-size: 12px; color: #999; margin-top: 5px;">Probabilidad >3, Impacto >3</div>
+      </div>
+
+    </div>
+
+    <!-- Gráfico de Matriz -->
+        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); height: 600px;">
+        <canvas #matrizCanvas></canvas>
+        </div>
+
+    <!-- Leyenda -->
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-top: 20px;">
+      <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 18px;">📌 Interpretación</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <div>
+          <span style="display: inline-block; width: 20px; height: 20px; background: #28a745; border-radius: 50%; margin-right: 8px;"></span>
+          <strong>Verde:</strong> Riesgos aceptables
+        </div>
+        <div>
+          <span style="display: inline-block; width: 20px; height: 20px; background: #ffc107; border-radius: 50%; margin-right: 8px;"></span>
+          <strong>Amarillo:</strong> Requieren atención
+        </div>
+        <div>
+          <span style="display: inline-block; width: 20px; height: 20px; background: #fd7e14; border-radius: 50%; margin-right: 8px;"></span>
+          <strong>Naranja:</strong> Prioridad alta
+        </div>
+        <div>
+          <span style="display: inline-block; width: 20px; height: 20px; background: #dc3545; border-radius: 50%; margin-right: 8px;"></span>
+          <strong>Rojo:</strong> Acción inmediata
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

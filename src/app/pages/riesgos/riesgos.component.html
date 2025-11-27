@@ -18,27 +18,110 @@
     ❌ {{ error }}
   </p>
 
+  <!-- Barra de Filtros y Búsqueda -->
+  <div *ngIf="!cargando" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+    
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+      
+      <!-- Búsqueda -->
+
+
+      <!-- Botón limpiar filtros -->
+      <button 
+        (click)="limpiarFiltros()"
+        style="padding: 12px 20px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap;">
+        🔄 Limpiar
+      </button>
+    </div>
+
+    <!-- Filtros -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+      
+      <!-- Filtro Categoría -->
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Categoría</label>
+        <select 
+          [(ngModel)]="filtroCategoria"
+          (ngModelChange)="aplicarFiltros()"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+          <option value="">Todas</option>
+          <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+
+      <!-- Filtro Estado -->
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Estado</label>
+        <select 
+          [(ngModel)]="filtroEstado"
+          (ngModelChange)="aplicarFiltros()"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+          <option value="">Todos</option>
+          <option *ngFor="let est of estados" [value]="est">{{ est }}</option>
+        </select>
+      </div>
+
+      <!-- Filtro Nivel -->
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Nivel de Riesgo</label>
+        <select 
+          [(ngModel)]="filtroNivel"
+          (ngModelChange)="aplicarFiltros()"
+          style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+          <option value="">Todos</option>
+          <option *ngFor="let nivel of niveles" [value]="nivel">{{ nivel }}</option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Contador de resultados -->
+    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #dee2e6; font-size: 14px; color: #6c757d;">
+      <strong>{{ riesgosFiltrados.length }}</strong> de <strong>{{ riesgos.length }}</strong> riesgos mostrados
+    </div>
+
+  </div>
+
+  <!-- Botón Exportar Excel -->
+  <div *ngIf="!cargando && riesgos.length > 0" style="display: flex; gap: 10px; margin-bottom: 20px;">
+    <button 
+      (click)="exportarRiesgosExcel()"
+      style="padding: 12px 24px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);">
+      📊 Exportar a Excel
+    </button>
+  </div>
+
   <!-- Tabla -->
-  <div *ngIf="!cargando && riesgos.length > 0" style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow-x: auto;">
+  <div *ngIf="!cargando && riesgosFiltrados.length > 0" style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow-x: auto;">
     <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
       <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
         <tr>
-          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">ID</th>
-          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Título</th>
+          <th (click)="ordenarPor('riesgo_id')" style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap; cursor: pointer; user-select: none;">
+            ID {{ ordenColumna === 'riesgo_id' ? (ordenDireccion === 'asc' ? '↑' : '↓') : '' }}
+          </th>
+          <th (click)="ordenarPor('titulo')" style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap; cursor: pointer; user-select: none;">
+            Título {{ ordenColumna === 'titulo' ? (ordenDireccion === 'asc' ? '↑' : '↓') : '' }}
+          </th>
           <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Descripción</th>
-          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Categoría</th>
+          <th (click)="ordenarPor('categoria')" style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap; cursor: pointer; user-select: none;">
+            Categoría {{ ordenColumna === 'categoria' ? (ordenDireccion === 'asc' ? '↑' : '↓') : '' }}
+          </th>
           <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Área/Proceso</th>
           <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap;">Prob</th>
           <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap;">Impacto</th>
-          <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap;">Nivel</th>
-          <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Estado</th>
+          <th (click)="ordenarPor('nivel_riesgo')" style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap; cursor: pointer; user-select: none;">
+            Nivel {{ ordenColumna === 'nivel_riesgo' ? (ordenDireccion === 'asc' ? '↑' : '↓') : '' }}
+          </th>
+          <th (click)="ordenarPor('estado')" style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap; cursor: pointer; user-select: none;">
+            Estado {{ ordenColumna === 'estado' ? (ordenDireccion === 'asc' ? '↑' : '↓') : '' }}
+          </th>
           <th style="padding: 14px 12px; text-align: left; font-weight: 600; font-size: 13px; white-space: nowrap;">Fecha Alta</th>
           <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap;">Resp</th>
           <th style="padding: 14px 12px; text-align: center; font-weight: 600; font-size: 13px; white-space: nowrap;">Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let r of riesgos" style="border-bottom: 1px solid #e9ecef;">
+        <tr *ngFor="let r of riesgosFiltrados" style="border-bottom: 1px solid #e9ecef;">
           <td style="padding: 12px; font-weight: bold; color: #6c757d; font-size: 13px;">{{ r.riesgo_id }}</td>
           <td style="padding: 12px; font-weight: 600; color: #2c3e50; max-width: 200px;">{{ r.titulo }}</td>
           <td style="padding: 12px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #6c757d; font-size: 13px;">{{ r.descripcion }}</td>
@@ -77,7 +160,18 @@
     </table>
   </div>
 
-  <!-- Mensaje vacío -->
+  <!-- Mensaje cuando no hay resultados filtrados -->
+  <div *ngIf="!cargando && riesgosFiltrados.length === 0 && riesgos.length > 0" style="text-align: center; padding: 60px 20px; background: #fff3cd; border-radius: 8px;">
+    <p style="font-size: 18px; color: #856404; margin-bottom: 10px;">🔍 No se encontraron resultados</p>
+    <p style="color: #856404;">Intenta ajustar los filtros de búsqueda</p>
+    <button 
+      (click)="limpiarFiltros()" 
+      style="margin-top: 15px; padding: 10px 20px; background: #ffc107; color: #212529; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+      Limpiar filtros
+    </button>
+  </div>
+
+  <!-- Mensaje vacío inicial -->
   <div *ngIf="!cargando && riesgos.length === 0 && !error" style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 8px;">
     <p style="font-size: 18px; color: #6c757d; margin-bottom: 20px;">📋 No hay riesgos registrados.</p>
     <button routerLink="/riesgos/nuevo" style="padding: 12px 24px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer;">

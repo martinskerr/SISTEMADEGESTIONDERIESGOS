@@ -20,11 +20,16 @@ export class UsuariosComponent implements OnInit {
     nombre: '',
     email: '',
     password: '',
-    rol: 'Usuario',
+    rol_id: 3,  // ← Cambio: ahora es rol_id (3 = Usuario por defecto)
     activo: true
   };
 
-  roles = ['ADMIN', 'Analista', 'Usuario'];
+  // ← Cambio: ahora es un array de objetos con id y nombre
+  roles = [
+    { id: 1, nombre: 'ADMIN' },
+    { id: 2, nombre: 'Analista' },
+    { id: 3, nombre: 'Usuario' }
+  ];
 
   cargando = false;
   error = '';
@@ -68,7 +73,7 @@ export class UsuariosComponent implements OnInit {
       nombre: usuario.nombre,
       email: usuario.email,
       password: '',
-      rol: usuario.rol,
+      rol_id: usuario.rol_id,  // ← Cambio: usar rol_id
       activo: usuario.activo
     };
   }
@@ -89,7 +94,7 @@ export class UsuariosComponent implements OnInit {
       const dataUpdate = {
         nombre: this.nuevoUsuario.nombre,
         email: this.nuevoUsuario.email,
-        rol: this.nuevoUsuario.rol,
+        rol_id: this.nuevoUsuario.rol_id,  // ← Cambio: enviar rol_id
         activo: this.nuevoUsuario.activo
       };
 
@@ -151,7 +156,7 @@ export class UsuariosComponent implements OnInit {
       nombre: '',
       email: '',
       password: '',
-      rol: 'Usuario',
+      rol_id: 3,  // ← Cambio: resetear a 3 (Usuario)
       activo: true
     };
     this.usuarioSeleccionado = null;
